@@ -33,7 +33,7 @@ export default function ExpressPage() {
             className="transform transition-transform duration-300 hover:scale-110 rounded-xl"
           />
           <Link
-            href="/subject-choice"
+            href="/story"
             className="bg-[#FFA987] mt-4 text-white text-2xl font-bold py-2 px-6 rounded-lg shadow-md hover:bg-[#FF8A75] transition-all"
           >
             عبر 
