@@ -1,7 +1,7 @@
 /* eslint-disable */
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface QuizQuestion {
   question: string;
@@ -28,56 +28,78 @@ export default function QuizPage() {
   {
     "quiz": [
       {
-        "question": "اكتب الحرف الصغير في الصورة: 🐫 (ظل)",
+        "question": "اختر الحرف الأول من كلمة 'تفاحة'",
         "options": {
-          "أ": "خِنْزِير",
-          "ب": "خَنزِير",
-          "ج": "خنّار"
+          "أ": "ت",
+          "ب": "ف",
+          "ج": "خ"
         },
-        "correct_answer": "ب",
-        "feedback": "رائع!"
-      },
-      {
-        "question": "اقترح صوت الكلمة 'قطة'.",
-        "options": {
-          "أ": "دا",
-          "ب": "قـ",
-          "ج": "ها"
-        },
-        "correct_answer": "ب",
+        "correct_answer": "أ",
         "feedback": "أحسنت!"
       },
       {
-        "question": "اربط الصورة بالكلمة الصحيحة:",
+        "question": "اربط الحيوان بالصوت المناسب:",
         "matches": [
-          { "مامول": "ورق" },
-          { "سعرور": "كبد" }
+          { "قطة": "مياو" },
+          { "كلب": "هوهو" },
+          { "بقرة": "مووو" }
         ],
         "feedback": "رائع!"
       },
       {
-        "question": "اكتب الكلمة الكاملة: _ فيتا (🌞)،",
-        "correct_answer": "الشمس",
-        "feedback": "أحسنت جدا!"
-      },
-      {
-        "question": "اقرأ واجعل الحرف الزائد: 'صيدا ميميم'.",
-        "correct_answer": "صيدا -مِمميم",
-        "feedback": "رائع!"
-      },
-      {
-        "question": "انظر إلى القطة. إذا كانت القطة مستلقية على الرخام، كيف ستكتب الكلمة: 'قطة على ال/الرخم'?",
+        "question": "ما هو لون التفاحة؟",
         "options": {
-          "أ": "قطة على الرخم",
-          "ب": "قطة على الرخامي",
-          "ج": "قطة على الرخام"
+          "أ": "أحمر",
+          "ب": "أخضر",
+          "ج": "أزرق"
         },
-        "correct_answer": "ج",
+        "correct_answer": "أ",
         "feedback": "رائع!"
+      },
+      {
+        "question": "أي من هذه الأشياء يستخدم للكتابة؟",
+        "options": {
+          "أ": "كرة",
+          "ب": "قلم",
+          "ج": "حقيبة"
+        },
+        "correct_answer": "ب",
+        "feedback": "عمل جيد!"
+      },
+      {
+        "question": "ماذا نأكل في الصباح؟",
+        "options": {
+          "أ": "الإفطار",
+          "ب": "العشاء",
+          "ج": "الغداء"
+        },
+        "correct_answer": "أ",
+        "feedback": "ممتاز!"
+      },
+      {
+        "question": "ما هو أول حرف في كلمة 'مدرسة'؟",
+        "options": {
+          "أ": "م",
+          "ب": "د",
+          "ج": "س"
+        },
+        "correct_answer": "أ",
+        "feedback": "أحسنت!"
+      },
+      {
+        "question": "اختر الكلمة الصحيحة: القطة ___",
+        "options": {
+          "أ": "تنام",
+          "ب": "يأكل",
+          "ج": "يقفز"
+        },
+        "correct_answer": "أ",
+        "feedback": "أحسنت!"
       }
     ]
   }
 ]
+     
 `;
 
       try {
@@ -87,14 +109,14 @@ export default function QuizPage() {
           setCurrentQuestion(0);
           setFeedback(null);
         } else {
-          throw new Error('Invalid data structure');
+          throw new Error("Invalid data structure");
         }
       } catch (e) {
-        console.error('Error parsing quiz data:', e);
+        console.error("Error parsing quiz data:", e);
         setQuizData(null);
       }
     } catch (error) {
-      console.error('Error in fetch:', error);
+      console.error("Error in fetch:", error);
       setQuizData(null);
     }
   };
@@ -105,25 +127,24 @@ export default function QuizPage() {
 
   const handleAnswer = (answer: string) => {
     if (!quizData) return;
-    
+
     const question = quizData.quiz[currentQuestion];
     if (answer === question.correct_answer) {
       setFeedback(question.feedback);
-      // Add delay before moving to next question
       setTimeout(() => {
         if (currentQuestion < quizData.quiz.length - 1) {
-          setCurrentQuestion(prev => prev + 1);
+          setCurrentQuestion((prev) => prev + 1);
           setFeedback(null);
         }
-      }, 1500); // 1.5 seconds delay
+      }, 1500);
     }
   };
 
   const handleNextQuestion = () => {
     if (!quizData) return;
-    
+
     if (currentQuestion < quizData.quiz.length - 1) {
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentQuestion((prev) => prev + 1);
       setFeedback(null);
     }
   };
@@ -167,7 +188,7 @@ export default function QuizPage() {
                 onClick={() => handleAnswer(key)}
                 disabled={!!feedback}
                 className={`bg-[#FFA987] text-white text-xl font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#FF8A75] transition-all text-right ${
-                  feedback ? 'opacity-50 cursor-not-allowed' : ''
+                  feedback ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
                 {value}
