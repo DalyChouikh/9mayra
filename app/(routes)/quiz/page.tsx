@@ -22,42 +22,79 @@ export default function QuizPage() {
 
   const fetchQuiz = async () => {
     try {
-      const response = await fetch('http://localhost:8002/Quiz?data=next');
-      let rawData = await response.json();
-      
-      // Clean up the data by removing backticks and "json" string
-      if (typeof rawData === 'string') {
-        rawData = rawData.replace("```json", '');
-        rawData = rawData.replace("```", '');
-        try {
-          rawData = JSON.parse(rawData);
-        } catch (e) {
-          console.error('Error parsing cleaned JSON:', e);
-          setQuizData(null);
-          return;
-        }
+      //const response = await fetch('http://localhost:8002/Quiz?data=next');
+      //const rawData = await response.json();
+      const mockData = `[
+  {
+    "quiz": [
+      {
+        "question": "اكتب الحرف الصغير في الصورة: 🐫 (ظل)",
+        "options": {
+          "أ": "خِنْزِير",
+          "ب": "خَنزِير",
+          "ج": "خنّار"
+        },
+        "correct_answer": "ب",
+        "feedback": "رائع!"
+      },
+      {
+        "question": "اقترح صوت الكلمة 'قطة'.",
+        "options": {
+          "أ": "دا",
+          "ب": "قـ",
+          "ج": "ها"
+        },
+        "correct_answer": "ب",
+        "feedback": "أحسنت!"
+      },
+      {
+        "question": "اربط الصورة بالكلمة الصحيحة:",
+        "matches": [
+          { "مامول": "ورق" },
+          { "سعرور": "كبد" }
+        ],
+        "feedback": "رائع!"
+      },
+      {
+        "question": "اكتب الكلمة الكاملة: _ فيتا (🌞)،",
+        "correct_answer": "الشمس",
+        "feedback": "أحسنت جدا!"
+      },
+      {
+        "question": "اقرأ واجعل الحرف الزائد: 'صيدا ميميم'.",
+        "correct_answer": "صيدا -مِمميم",
+        "feedback": "رائع!"
+      },
+      {
+        "question": "انظر إلى القطة. إذا كانت القطة مستلقية على الرخام، كيف ستكتب الكلمة: 'قطة على ال/الرخم'?",
+        "options": {
+          "أ": "قطة على الرخم",
+          "ب": "قطة على الرخامي",
+          "ج": "قطة على الرخام"
+        },
+        "correct_answer": "ج",
+        "feedback": "رائع!"
       }
-      
-      // Rest of the data handling
-      if (rawData && rawData.quiz) {
-        setQuizData({ quiz: rawData.quiz });
-      } else if (Array.isArray(rawData) && rawData.length > 0) {
-        const firstItem = rawData[0];
-        if (firstItem && firstItem.quiz) {
-          setQuizData({ quiz: firstItem.quiz });
+    ]
+  }
+]
+`;
+
+      try {
+        const parsedData = JSON.parse(mockData);
+        if (Array.isArray(parsedData) && parsedData[0]?.quiz) {
+          setQuizData({ quiz: parsedData[0].quiz });
+          setCurrentQuestion(0);
+          setFeedback(null);
         } else {
-          console.error('Invalid quiz data structure:', rawData);
-          setQuizData(null);
+          throw new Error('Invalid data structure');
         }
-      } else {
-        console.error('Invalid data structure received:', rawData);
+      } catch (e) {
+        console.error('Error parsing quiz data:', e);
         setQuizData(null);
       }
-      
-      setCurrentQuestion(0);
-      setFeedback(null);
     } catch (error) {
-      console.error('Error fetching quiz:', error);
+      console.error('Error in fetch:', error);
       setQuizData(null);
     }
   };
@@ -72,6 +109,13 @@ export default function QuizPage() {
     const question = quizData.quiz[currentQuestion];
     if (answer === question.correct_answer) {
       setFeedback(question.feedback);
+      // Add delay before moving to next question
+      setTimeout(() => {
+        if (currentQuestion < quizData.quiz.length - 1) {
+          setCurrentQuestion(prev => prev + 1);
+          setFeedback(null);
+        }
+      }, 1500); // 1.5 seconds delay
     }
   };
 
@@ -105,6 +149,12 @@ export default function QuizPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="bg-[#2A3A5E]/50 p-8 rounded-2xl shadow-xl max-w-2xl w-full backdrop-blur-sm">
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-white text-xl">
+            السؤال {currentQuestion + 1} من {quizData.quiz.length}
+          </span>
+        </div>
+
         <h2 className="text-3xl font-bold text-white mb-8 text-center">
           {currentQuestionData.question}
         </h2>
@@ -115,7 +165,10 @@ export default function QuizPage() {
               <button
                 key={key}
                 onClick={() => handleAnswer(key)}
-                className="bg-[#FFA987] text-white text-xl font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#FF8A75] transition-all text-right"
+                disabled={!!feedback}
+                className={`bg-[#FFA987] text-white text-xl font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#FF8A75] transition-all text-right ${
+                  feedback ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
                 {value}
               </button>
@@ -129,13 +182,22 @@ export default function QuizPage() {
           </div>
         )}
 
-        <div className="mt-8 flex justify-center">
-          <button
-            onClick={fetchQuiz}
-            className="bg-[#FFA987] text-white text-xl font-bold py-2 px-6 rounded-lg shadow-md hover:bg-[#FF8A75] transition-all"
-          >
-            سؤال جديد
-          </button>
+        <div className="mt-8 flex justify-center space-x-4">
+          {currentQuestion < quizData.quiz.length - 1 ? (
+            <button
+              onClick={handleNextQuestion}
+              className="bg-[#FFA987] text-white text-xl font-bold py-2 px-6 rounded-lg shadow-md hover:bg-[#FF8A75] transition-all"
+            >
+              السؤال التالي
+            </button>
+          ) : (
+            <button
+              onClick={fetchQuiz}
+              className="bg-[#FFA987] text-white text-xl font-bold py-2 px-6 rounded-lg shadow-md hover:bg-[#FF8A75] transition-all"
+            >
+              إعادة الإختبار
+            </button>
+          )}
         </div>
       </div>
     </div>
