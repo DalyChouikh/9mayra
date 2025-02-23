@@ -38,15 +38,6 @@ export default function QuizPage() {
         "feedback": "أحسنت!"
       },
       {
-        "question": "اربط الحيوان بالصوت المناسب:",
-        "matches": [
-          { "قطة": "مياو" },
-          { "كلب": "هوهو" },
-          { "بقرة": "مووو" }
-        ],
-        "feedback": "رائع!"
-      },
-      {
         "question": "ما هو لون التفاحة؟",
         "options": {
           "أ": "أحمر",
